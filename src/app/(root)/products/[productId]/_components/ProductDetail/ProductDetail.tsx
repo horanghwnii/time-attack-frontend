@@ -1,13 +1,25 @@
 'use client';
 
 import API from '@/api/index.api';
-import { useQuery } from '@tanstack/react-query';
+import LogInModal from '@/components/LogInModal';
+import { useAuth } from '@/contexts/auth.context';
+import { setModal } from '@/redux/slices/modal.slice';
+import { useAppDispatch } from '@/redux/store';
+import { useMutation, useQuery } from '@tanstack/react-query';
+import { useRouter } from 'next/navigation';
 
 interface ProductDetailProps {
   productId: number;
 }
 
 function ProductDetail({ productId }: ProductDetailProps) {
+  const { mutateAsync: addItem } = useMutation({
+    mutationFn: API.cart.addItemToCart,
+  });
+  const { mutateAsync: clearItem } = useMutation({
+    mutationFn: API.cart.clearItemInCart,
+  });
+
   const returnValueOfUseQuery = useQuery({
     queryKey: ['product', { isList: false, productId }],
     queryFn: () => API.product.getProductDetail(productId),
@@ -15,8 +27,30 @@ function ProductDetail({ productId }: ProductDetailProps) {
 
   const { data: product, isLoading } = returnValueOfUseQuery;
 
+  const { isLoggedIn } = useAuth();
+
+  const router = useRouter();
+
+  const dispatch = useAppDispatch();
+
   if (isLoading)
     return <h1 className='text-center font-bold'>잠시만 기다려주세요...</h1>;
+
+  const handleClickAddItem = async (productId: number) => {
+    if (!isLoggedIn) {
+      const action = setModal(<LogInModal />);
+      dispatch(action);
+      return;
+    }
+
+    await addItem(productId);
+    return alert('장바구니에 담겼습니다.');
+  };
+
+  const handleClickClearItem = async (productId: number) => {
+    const returnValue = await clearItem(productId);
+    return returnValue;
+  };
 
   return (
     <div className='flex max-w-[1000px] mx-auto'>
@@ -46,7 +80,10 @@ function ProductDetail({ productId }: ProductDetailProps) {
             <li className='col-span-3'>{product.onlineStock}</li>
           </ul>
         </div>
-        <button className='border w-full py-5 bg-black text-white mt-14 text-sm'>
+        <button
+          onClick={() => handleClickAddItem(product.id)}
+          className='border w-full py-5 bg-black text-white mt-14 text-sm'
+        >
           장바구니에 담기
         </button>
       </div>
@@ -55,8 +92,3 @@ function ProductDetail({ productId }: ProductDetailProps) {
 }
 
 export default ProductDetail;
-
-// 정가 ₩2,300,000
-// 판매가 ₩1,186,800
-// 배송 당일배송
-// 잔여 재고 200

@@ -21,6 +21,12 @@ function HeaderAuthButtons() {
     <div className='flex items-center gap-2'>
       {isLoggedIn ? (
         <>
+          <Link
+            href='/cart'
+            className='text-sm hover:text-indigo-300 transition-all'
+          >
+            장바구니
+          </Link>
           <button
             onClick={onClickLogOutButton}
             className='text-sm hover:text-indigo-300 transition-all'
