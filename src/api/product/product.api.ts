@@ -17,8 +17,8 @@ class ProductAPI {
     return result;
   };
 
-  getProductDetail = async (id: number) => {
-    const url = `/products/${id}`;
+  getProductDetail = async (productId: number) => {
+    const url = `/products/${productId}`;
     const response = await this.coreClient.get<GetProductsData>(url);
     const data = response.data;
     const result = data.result;
