@@ -15,9 +15,8 @@ function ProductDetail({ productId }: ProductDetailProps) {
 
   const { data: product, isLoading } = returnValueOfUseQuery;
 
-  if (isLoading) return <h1>잠시만 기다려주세요...</h1>;
-
-  console.log(product);
+  if (isLoading)
+    return <h1 className='text-center font-bold'>잠시만 기다려주세요...</h1>;
 
   return (
     <div className='flex max-w-[1000px] mx-auto'>
