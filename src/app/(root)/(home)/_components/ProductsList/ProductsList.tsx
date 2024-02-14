@@ -1,7 +1,7 @@
 'use client';
 
 import API from '@/api/index.api';
-import { Product } from '@/types/product.type';
+import { Product } from '@/types/Product.type';
 import { useQuery } from '@tanstack/react-query';
 import ProductsListItem from '../ProductsListItem';
 
